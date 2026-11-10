@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security Talk QR Trap</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Space Grotesk, Inter, Fira Code -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&family=Fira+Code:wght@400;500&display=swap" />
+  <!-- QRCode.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    body {
+      background-color: #0a0d14;
+      color: #f8fafc;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .font-display {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .font-mono-cyber {
+      font-family: 'Fira Code', monospace;
+    }
+
+    /* Subtle cyber grid background */
+    .cyber-grid {
+      background-image:
+        linear-gradient(to right, rgba(56, 189, 248, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* Awkward side-eye pupil animation */
+    @keyframes awkwardSideEye {
+      0%, 15% {
+        transform: translateX(-14px);
+      }
+      30%, 55% {
+        transform: translateX(14px);
+      }
+      70%, 85% {
+        transform: translateX(-14px);
+      }
+      100% {
+        transform: translateX(-14px);
+      }
+    }
+
+    .pupil-animate {
+      animation: awkwardSideEye 4.2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+    }
+
+    /* Subtle eyelid squint for extra awkwardness */
+    @keyframes awkwardSquint {
+      0%, 15%, 70%, 100% {
+        transform: scaleY(1);
+      }
+      30%, 55% {
+        transform: scaleY(0.94);
+      }
+    }
+
+    .eye-group-animate {
+      transform-origin: center;
+      animation: awkwardSquint 4.2s ease-in-out infinite;
+    }
+
+    /* Ensure generated QR code canvas/img is crisp and centered */
+    #qrcode img,
+    #qrcode canvas {
+      margin: 0 auto;
+      border-radius: 8px;
+      display: block;
+    }
+  </style>
+</head>
+<body class="min-h-screen cyber-grid flex flex-col items-center justify-center p-4 sm:p-6 relative selection:bg-sky-500/30 selection:text-sky-200">
+
+  <!-- Ambient subtle glow -->
+  <div class="pointer-events-none fixed inset-0 flex items-center justify-center overflow-hidden">
+    <div class="w-[500px] h-[500px] rounded-full bg-sky-500/5 blur-3xl"></div>
+  </div>
+
+  <!-- Top-Right Floating Pill Toggle -->
+  <div class="fixed top-4 right-4 sm:top-6 sm:right-6 z-50">
+    <button
+      id="modeToggleBtn"
+      type="button"
+      class="flex items-center gap-2 px-4 py-2.5 rounded-full bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 text-slate-200 text-xs sm:text-sm font-medium shadow-lg backdrop-blur-md transition-all duration-200 active:scale-95 cursor-pointer"
+    >
+      <span id="toggleDot" class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
+      <span id="toggleText">Presenter QR Mode</span>
+    </button>
+  </div>
+
+  <!-- ==========================================
+       VIEW 1: TRAP PAGE (DEFAULT VIEW)
+       ========================================== -->
+  <main id="trapView" class="relative z-10 w-full max-w-2xl mx-auto flex flex-col items-center text-center px-4 py-8">
+    <!-- Terminal badge -->
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-sky-400 font-mono-cyber text-xs mb-8">
+      <span>[!]</span>
+      <span>UNTRUSTED_INPUT_DETECTED</span>
+    </div>
+
+    <!-- Animated SVG Awkward Eyes -->
+    <div class="mb-8 select-none">
+      <svg
+        width="220"
+        height="100"
+        viewBox="0 0 220 100"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-label="Awkward side-eye animation"
+        class="drop-shadow-[0_10px_25px_rgba(0,0,0,0.6)]"
+      >
+        <g class="eye-group-animate">
+          <!-- Left Eye -->
+          <g>
+            <!-- Sclera -->
+            <ellipse cx="60" cy="50" rx="42" ry="34" fill="#F8FAFC" stroke="#1E293B" stroke-width="4" />
+            <!-- Pupil & Iris -->
+            <g class="pupil-animate">
+              <circle cx="60" cy="50" r="14" fill="#0F172A" />
+              <circle cx="55" cy="44" r="4" fill="#FFFFFF" opacity="0.9" />
+            </g>
+            <!-- Subtle upper eyelid line -->
+            <path d="M22 36 Q60 22 98 36" stroke="#334155" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.35" />
+          </g>
+
+          <!-- Right Eye -->
+          <g>
+            <!-- Sclera -->
+            <ellipse cx="160" cy="50" rx="42" ry="34" fill="#F8FAFC" stroke="#1E293B" stroke-width="4" />
+            <!-- Pupil & Iris -->
+            <g class="pupil-animate">
+              <circle cx="160" cy="50" r="14" fill="#0F172A" />
+              <circle cx="155" cy="44" r="4" fill="#FFFFFF" opacity="0.9" />
+            </g>
+            <!-- Subtle upper eyelid line -->
+            <path d="M122 36 Q160 22 198 36" stroke="#334155" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.35" />
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Punchy Headline -->
+    <h1 class="font-display text-3xl sm:text-5xl font-bold text-slate-50 tracking-tight leading-tight mb-5">
+      So you just gonna freely scan anything at a security talk
+    </h1>
+
+    <!-- Witty Sub-caption -->
+    <p class="text-base sm:text-lg text-slate-400 max-w-lg leading-relaxed">
+      Relax—no payloads here. Just a friendly reminder about untrusted inputs.
+    </p>
+  </main>
+
+  <!-- ==========================================
+       VIEW 2: PRESENTER QR MODE
+       ========================================== -->
+  <section id="presenterView" class="hidden relative z-10 w-full max-w-md mx-auto">
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl backdrop-blur-md">
+      <div class="flex items-center justify-between mb-2">
+        <span class="font-mono-cyber text-xs text-sky-400 uppercase tracking-wider">Presenter Mode</span>
+        <span class="text-xs text-slate-500 font-mono-cyber">QR Generator</span>
+      </div>
+      <h2 class="font-display text-2xl font-bold text-slate-100 mb-2">
+        Slide QR Code
+      </h2>
+      <p class="text-sm text-slate-400 mb-6">
+        Paste your hosted URL below to generate a high-contrast QR code for your presentation slide.
+      </p>
+
+      <!-- URL Input -->
+      <div class="mb-6">
+        <label for="urlInput" class="block text-xs font-medium text-slate-300 mb-2">
+          Target URL
+        </label>
+        <input
+          id="urlInput"
+          type="url"
+          placeholder="https://your-hosted-trap-page.com"
+          class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 text-sm font-mono-cyber focus:outline-none focus:ring-2 focus:ring-sky-500/60 focus:border-sky-500 transition-all"
+        />
+      </div>
+
+      <!-- QR Code Display Box -->
+      <div class="bg-white p-5 rounded-xl flex items-center justify-center mb-6 shadow-inner min-h-[240px]">
+        <div id="qrcode"></div>
+      </div>
+
+      <!-- Download Button -->
+      <button
+        id="downloadQrBtn"
+        type="button"
+        class="w-full py-3 px-4 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold text-sm transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-sky-500/20"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V3" />
+        </svg>
+        <span>Download QR as PNG</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Application Logic -->
+  <script>
+    (function () {
+      const trapView = document.getElementById('trapView');
+      const presenterView = document.getElementById('presenterView');
+      const modeToggleBtn = document.getElementById('modeToggleBtn');
+      const toggleText = document.getElementById('toggleText');
+      const toggleDot = document.getElementById('toggleDot');
+      const urlInput = document.getElementById('urlInput');
+      const qrcodeContainer = document.getElementById('qrcode');
+      const downloadQrBtn = document.getElementById('downloadQrBtn');
+
+      let isPresenterMode = false;
+      let qrInstance = null;
+
+      // Initialize URL input with current window location
+      urlInput.value = window.location.href;
+
+      /**
+       * Renders or updates the QR code based on the current input value.
+       */
+      function generateQR(text) {
+        try {
+          const targetText = text.trim() || window.location.href;
+          qrcodeContainer.innerHTML = '';
+          qrInstance = new QRCode(qrcodeContainer, {
+            text: targetText,
+            width: 200,
+            height: 200,
+            colorDark: '#090d16',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+          });
+        } catch (err) {
+          console.error('QR generation failed:', err);
+        }
+      }
+
+      // Toggle between Trap Page and Presenter QR Mode
+      modeToggleBtn.addEventListener('click', () => {
+        isPresenterMode = !isPresenterMode;
+
+        if (isPresenterMode) {
+          trapView.classList.add('hidden');
+          presenterView.classList.remove('hidden');
+          toggleText.textContent = 'Preview Trap Page';
+          toggleDot.classList.remove('bg-sky-400');
+          toggleDot.classList.add('bg-emerald-400');
+          generateQR(urlInput.value);
+        } else {
+          presenterView.classList.add('hidden');
+          trapView.classList.remove('hidden');
+          toggleText.textContent = 'Presenter QR Mode';
+          toggleDot.classList.remove('bg-emerald-400');
+          toggleDot.classList.add('bg-sky-400');
+        }
+      });
+
+      // Regenerate QR code live as the speaker types or pastes a URL
+      urlInput.addEventListener('input', (e) => {
+        generateQR(e.target.value);
+      });
+
+      // Download generated QR code as a PNG file
+      downloadQrBtn.addEventListener('click', () => {
+        try {
+          const canvas = qrcodeContainer.querySelector('canvas');
+          const img = qrcodeContainer.querySelector('img');
+          let dataUrl = '';
+
+          if (canvas) {
+            dataUrl = canvas.toDataURL('image/png');
+          } else if (img && img.src) {
+            dataUrl = img.src;
+          }
+
+          if (!dataUrl) return;
+
+          const link = document.createElement('a');
+          link.href = dataUrl;
+          link.download = 'security-talk-qr-trap.png';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } catch (err) {
+          console.error('Failed to download QR code:', err);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
